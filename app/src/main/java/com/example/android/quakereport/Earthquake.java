@@ -6,28 +6,33 @@ package com.example.android.quakereport;
 
 public class Earthquake {
 
-    private String mString;
-    private String mString2;
-    private String mString3;
+    private String mMagnitude;
+    private String mLocation;
+    private long mTimeInMilliseconds;
 
-    public Earthquake(String string, String string2, String string3){
-        mString = string;
-        mString2 = string2;
-        mString3 = string3;
+    /**
+     * @param magnitude          is the magnitude (size) of the earthquake
+     * @param location           is the city location of the earthquake
+     * @param timeInMilliseconds is the time in milliseconds (from the Epoch) when the earthquake happened
+     */
+    public Earthquake(String magnitude, String location, long timeInMilliseconds) {
+        mMagnitude = magnitude;
+        mLocation = location;
+        mTimeInMilliseconds = timeInMilliseconds;
     }
 
-    // Returns mString defined in constructor
+    // Returns mMagnitude defined in constructor
     public String getMagnitude() {
-        return mString;
+        return mMagnitude;
     }
 
-    // Returns mString2 defined in constructor
+    // Returns mLocation defined in constructor
     public String getCity() {
-        return mString2;
+        return mLocation;
     }
 
-    // Returns mString2 defined in constructor
-    public String getDate() {
-        return mString3;
+    // Returns mTimeInMilliseconds defined in constructor
+    public long getTimeInMilliseconds() {
+        return mTimeInMilliseconds;
     }
 }
