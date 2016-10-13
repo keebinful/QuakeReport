@@ -14,6 +14,13 @@
         tools:text="8.9" />
 
     <TextView
+        android:id="@+id/offset"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        tools:text="5km NE of"/>
+
+    <TextView
         android:id="@+id/city"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
