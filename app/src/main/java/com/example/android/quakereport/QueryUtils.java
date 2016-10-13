@@ -62,7 +62,7 @@ public final class QueryUtils {
                 JSONObject propertyObject = jsonObject.getJSONObject("properties");
 
                 // Navigate to and store magnitude, city, and time as String variables
-                String magnitude = propertyObject.getString("mag");
+                double magnitude = propertyObject.getDouble("mag");
                 String city = propertyObject.getString("place");
                 long time = propertyObject.getLong("time");
 
