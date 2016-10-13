@@ -27,7 +27,7 @@ public class Earthquake {
     }
 
     // Returns mLocation defined in constructor
-    public String getCity() {
+    public String getLocation() {
         return mLocation;
     }
 

@@ -8,20 +8,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.example.android.quakereport.R.id.date;
-import static com.example.android.quakereport.R.id.time;
+import static com.example.android.quakereport.R.id.city;
+import static com.example.android.quakereport.R.id.list;
 
 /**
  * Created by kirik_000 on 10/6/2016.
  */
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
+
+    private static final String LOCATION_SEPARATOR = "of";
 
     public EarthquakeAdapter(Context context, ArrayList<Earthquake> earthquakes) {
         super(context, 0, earthquakes);
@@ -45,14 +45,36 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
             listItemView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
         }
 
+        String locationOffset;
+        String locationCity;
         Earthquake currentListItem = getItem(position);
 
         TextView magnitude = (TextView) listItemView.findViewById(R.id.magnitude);
         magnitude.setText(currentListItem.getMagnitude());
 
-        TextView city = (TextView) listItemView.findViewById(R.id.city);
-        city.setText(currentListItem.getCity());
+        /**
+         *
+         * @param locationParts splits location string into two if the string contains "of"
+         * @param locationOffset is the location offset string
+         * @param locationCity is the city where the earthquake occured
+         */
+        String fullLocation = currentListItem.getLocation();
+        if (fullLocation.contains(LOCATION_SEPARATOR)) {
+            String[] locationParts = fullLocation.split(LOCATION_SEPARATOR);
+            locationOffset = locationParts[0] + LOCATION_SEPARATOR;
+            locationCity = locationParts[1];
+        } else {
+            locationOffset = getContext().getString(R.string.near_the);
+            locationCity = fullLocation;
+        }
 
+        // Sets offsetView text to be locationOffset string
+        TextView offsetView = (TextView) listItemView.findViewById(R.id.offset);
+        offsetView.setText(locationOffset);
+
+        // Sets cityView text to be locationCity string
+        TextView cityView = (TextView) listItemView.findViewById(R.id.city);
+        cityView.setText(locationCity);
 
         Date dateObject = new Date(currentListItem.getTimeInMilliseconds());
         TextView dateView = (TextView) listItemView.findViewById(R.id.date);
