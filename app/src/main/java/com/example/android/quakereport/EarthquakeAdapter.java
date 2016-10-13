@@ -15,9 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.example.android.quakereport.R.id.city;
-import static com.example.android.quakereport.R.id.list;
-
 /**
  * Created by kirik_000 on 10/6/2016.
  */
@@ -119,11 +116,11 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         }
 
         // Sets offsetView text to be locationOffset string
-        TextView offsetView = (TextView) listItemView.findViewById(R.id.offset);
+        TextView offsetView = (TextView) listItemView.findViewById(R.id.location_offset);
         offsetView.setText(locationOffset);
 
         // Sets cityView text to be locationCity string
-        TextView cityView = (TextView) listItemView.findViewById(R.id.city);
+        TextView cityView = (TextView) listItemView.findViewById(R.id.primary_location);
         cityView.setText(locationCity);
 
         Date dateObject = new Date(currentListItem.getTimeInMilliseconds());
