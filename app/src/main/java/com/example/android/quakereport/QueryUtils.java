@@ -61,13 +61,14 @@ public final class QueryUtils {
                 // Store JSON object with key "properties" within object
                 JSONObject propertyObject = jsonObject.getJSONObject("properties");
 
-                // Navigate to and store magnitude, city, and time as String variables
+                // Navigate to and store magnitude, city, and time in variables
                 double magnitude = propertyObject.getDouble("mag");
                 String city = propertyObject.getString("place");
                 long time = propertyObject.getLong("time");
+                String url = propertyObject.getString("url");
 
                 // Add stored String variables to earthquakes Array List
-                earthquakes.add(new Earthquake(magnitude, city, time));
+                earthquakes.add(new Earthquake(magnitude, city, time, url));
             }
 
 

@@ -28,7 +28,6 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
     }
 
     /**
-     *
      * @param magnitude of the earthquake is casted to a new variable as an int data type to be used in the switch statement
      */
     private int getMagnitudeColor(double magnitude) {
@@ -83,7 +82,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
         String locationOffset;
         String locationCity;
-        Earthquake currentListItem = getItem(position);
+        final Earthquake currentListItem = getItem(position);
 
         TextView magnitudeView = (TextView) listItemView.findViewById(R.id.magnitude);
 
