@@ -1,5 +1,6 @@
 package com.example.android.quakereport;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.StringBuilderPrinter;
 
@@ -16,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.R.id.input;
 
@@ -35,6 +37,19 @@ public final class QueryUtils {
      * directly from the class name QueryUtils (and an object instance of QueryUtils is not needed).
      */
     private QueryUtils() {
+    }
+
+    public static List<Earthquake> fetchEarthquakeData(String requestUrl) {
+        String jsonResponse = "";
+        URL urlObject = createURL(requestUrl);
+
+        try {
+            jsonResponse = makeHttpRequest(urlObject);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Connection error.", e);
+        }
+        List<Earthquake> earthquakes = extractEarthquakes(jsonResponse);
+        return earthquakes;
     }
 
     // Creates URL object from String. Returns null if URL is malformed.
@@ -103,61 +118,54 @@ public final class QueryUtils {
      * Return a list of {@link Earthquake} objects that has been built up from
      * parsing a JSON response.
      */
-    public static ArrayList<Earthquake> extractEarthquakes(String urlString) {
+    public static List<Earthquake> extractEarthquakes(String jsonResponse) {
 
-        String jsonResponse = "";
-        URL urlObject = createURL(urlString);
-
-        try {
-            jsonResponse = makeHttpRequest(urlObject);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Connection error.", e);
+        if (TextUtils.isEmpty(jsonResponse)) {
+            return null;
         }
 
-
         // Create an empty ArrayList that we can start adding earthquakes to
-        ArrayList<Earthquake> earthquakes = new ArrayList<>();
+        List<Earthquake> earthquakes = new ArrayList<>();
 
         // Try to parse the SAMPLE_URL. If there's a problem with the way the JSON
         // is formatted, a JSONException exception object will be thrown.
         // Catch the exception so the app doesn't crash, and print the error message to the logs.
-        if (jsonResponse != null) {
-            try {
-                // Store JSON response in a JSON object
-                // TODO: Replace SAMPLE_URL with reference to jsonResponse
-                JSONObject jsonRootObject = new JSONObject(jsonResponse);
+        try {
+            // Store JSON response in a JSON object
+            // TODO: Replace SAMPLE_URL with reference to jsonResponse
+            JSONObject jsonRootObject = new JSONObject(jsonResponse);
 
-                // Navigate to JSONArray with key "features"
-                JSONArray featuresArray = jsonRootObject.getJSONArray("features");
+            // Navigate to JSONArray with key "features"
+            JSONArray featuresArray = jsonRootObject.getJSONArray("features");
 
-                for (int i = 0; i < featuresArray.length(); i++) {
-                    // Store JSON object from within features array at index i
-                    JSONObject jsonObject = featuresArray.getJSONObject(i);
+            for (int i = 0; i < featuresArray.length(); i++) {
+                // Store JSON object from within features array at index i
+                JSONObject jsonObject = featuresArray.getJSONObject(i);
 
-                    // Store JSON object with key "properties" within object
-                    JSONObject propertyObject = jsonObject.getJSONObject("properties");
+                // Store JSON object with key "properties" within object
+                JSONObject propertyObject = jsonObject.getJSONObject("properties");
 
-                    // Navigate to and store magnitude, city, and time in variables
-                    double magnitude = propertyObject.getDouble("mag");
-                    String city = propertyObject.getString("place");
-                    long time = propertyObject.getLong("time");
-                    String url = propertyObject.getString("url");
+                // Navigate to and store magnitude, city, and time in variables
+                double magnitude = propertyObject.getDouble("mag");
+                String city = propertyObject.getString("place");
+                long time = propertyObject.getLong("time");
+                String url = propertyObject.getString("url");
 
-                    // Add stored String variables to earthquakes Array List
-                    earthquakes.add(new Earthquake(magnitude, city, time, url));
-                }
-
-
-                // TODO: Parse the response given by the SAMPLE_URL string and
-                // build up a list of Earthquake objects with the corresponding data.
-
-            } catch (JSONException e) {
-                // If an error is thrown when executing any of the above statements in the "try" block,
-                // catch the exception here, so the app doesn't crash. Print a log message
-                // with the message from the exception.
-                Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
+                // Add stored String variables to earthquakes Array List
+                earthquakes.add(new Earthquake(magnitude, city, time, url));
             }
+
+
+            // TODO: Parse the response given by the SAMPLE_URL string and
+            // build up a list of Earthquake objects with the corresponding data.
+
+        } catch (JSONException e) {
+            // If an error is thrown when executing any of the above statements in the "try" block,
+            // catch the exception here, so the app doesn't crash. Print a log message
+            // with the message from the exception.
+            Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
         }
+
 
         // Return the list of earthquakes
         return earthquakes;
