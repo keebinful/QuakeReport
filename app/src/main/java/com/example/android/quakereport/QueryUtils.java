@@ -27,7 +27,6 @@ public final class QueryUtils {
     /**
      * Sample URL for a USGS query
      */
-    private static final String SAMPLE_URL = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
     /**
@@ -104,7 +103,17 @@ public final class QueryUtils {
      * Return a list of {@link Earthquake} objects that has been built up from
      * parsing a JSON response.
      */
-    public static ArrayList<Earthquake> extractEarthquakes() {
+    public static ArrayList<Earthquake> extractEarthquakes(String urlString) {
+
+        String jsonResponse = "";
+        URL urlObject = createURL(urlString);
+
+        try {
+            jsonResponse = makeHttpRequest(urlObject);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Connection error.", e);
+        }
+
 
         // Create an empty ArrayList that we can start adding earthquakes to
         ArrayList<Earthquake> earthquakes = new ArrayList<>();
@@ -112,40 +121,42 @@ public final class QueryUtils {
         // Try to parse the SAMPLE_URL. If there's a problem with the way the JSON
         // is formatted, a JSONException exception object will be thrown.
         // Catch the exception so the app doesn't crash, and print the error message to the logs.
-        try {
-            // Store JSON response in a JSON object
-            // TODO: Replace SAMPLE_URL with reference to jsonResponse
-            JSONObject jsonRootObject = new JSONObject(SAMPLE_URL);
+        if (jsonResponse != null) {
+            try {
+                // Store JSON response in a JSON object
+                // TODO: Replace SAMPLE_URL with reference to jsonResponse
+                JSONObject jsonRootObject = new JSONObject(jsonResponse);
 
-            // Navigate to JSONArray with key "features"
-            JSONArray featuresArray = jsonRootObject.getJSONArray("features");
+                // Navigate to JSONArray with key "features"
+                JSONArray featuresArray = jsonRootObject.getJSONArray("features");
 
-            for (int i = 0; i < featuresArray.length(); i++) {
-                // Store JSON object from within features array at index i
-                JSONObject jsonObject = featuresArray.getJSONObject(i);
+                for (int i = 0; i < featuresArray.length(); i++) {
+                    // Store JSON object from within features array at index i
+                    JSONObject jsonObject = featuresArray.getJSONObject(i);
 
-                // Store JSON object with key "properties" within object
-                JSONObject propertyObject = jsonObject.getJSONObject("properties");
+                    // Store JSON object with key "properties" within object
+                    JSONObject propertyObject = jsonObject.getJSONObject("properties");
 
-                // Navigate to and store magnitude, city, and time in variables
-                double magnitude = propertyObject.getDouble("mag");
-                String city = propertyObject.getString("place");
-                long time = propertyObject.getLong("time");
-                String url = propertyObject.getString("url");
+                    // Navigate to and store magnitude, city, and time in variables
+                    double magnitude = propertyObject.getDouble("mag");
+                    String city = propertyObject.getString("place");
+                    long time = propertyObject.getLong("time");
+                    String url = propertyObject.getString("url");
 
-                // Add stored String variables to earthquakes Array List
-                earthquakes.add(new Earthquake(magnitude, city, time, url));
+                    // Add stored String variables to earthquakes Array List
+                    earthquakes.add(new Earthquake(magnitude, city, time, url));
+                }
+
+
+                // TODO: Parse the response given by the SAMPLE_URL string and
+                // build up a list of Earthquake objects with the corresponding data.
+
+            } catch (JSONException e) {
+                // If an error is thrown when executing any of the above statements in the "try" block,
+                // catch the exception here, so the app doesn't crash. Print a log message
+                // with the message from the exception.
+                Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
             }
-
-
-            // TODO: Parse the response given by the SAMPLE_URL string and
-            // build up a list of Earthquake objects with the corresponding data.
-
-        } catch (JSONException e) {
-            // If an error is thrown when executing any of the above statements in the "try" block,
-            // catch the exception here, so the app doesn't crash. Print a log message
-            // with the message from the exception.
-            Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
         }
 
         // Return the list of earthquakes
