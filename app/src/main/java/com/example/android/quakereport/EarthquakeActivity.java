@@ -64,6 +64,7 @@ public class EarthquakeActivity extends AppCompatActivity {
 
     }
 
+    // Do HTTP request work and creating Lists to be added on adapter on background thread.
     private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>> {
         @Override
         protected List<Earthquake> doInBackground(String... urls) {
