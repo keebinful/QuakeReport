@@ -135,7 +135,6 @@ public final class QueryUtils {
         // Catch the exception so the app doesn't crash, and print the error message to the logs.
         try {
             // Store JSON response in a JSON object
-            // TODO: Replace SAMPLE_URL with reference to jsonResponse
             JSONObject jsonRootObject = new JSONObject(jsonResponse);
 
             // Navigate to JSONArray with key "features"
@@ -157,11 +156,6 @@ public final class QueryUtils {
                 // Add stored String variables to earthquakes Array List
                 earthquakes.add(new Earthquake(magnitude, city, time, url));
             }
-
-
-            // TODO: Parse the response given by the SAMPLE_URL string and
-            // build up a list of Earthquake objects with the corresponding data.
-
         } catch (JSONException e) {
             // If an error is thrown when executing any of the above statements in the "try" block,
             // catch the exception here, so the app doesn't crash. Print a log message

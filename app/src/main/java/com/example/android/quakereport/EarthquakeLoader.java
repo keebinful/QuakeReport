@@ -26,7 +26,6 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>> {
 
     @Override
     public List<Earthquake> loadInBackground() {
-        // TODO: Implement this method
         // Don't perform request if there are no URLs or if first URL is null
         if (mUrl == null) {
             return null;
