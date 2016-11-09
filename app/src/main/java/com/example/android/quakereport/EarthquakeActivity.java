@@ -16,18 +16,25 @@
 package com.example.android.quakereport;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static android.view.View.GONE;
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Earthquake>> {
 
@@ -36,12 +43,14 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private EarthquakeAdapter earthquakeAdapter;
     private static final int EARTHQUAKE_LOADER_ID = 1;
     private TextView emptyTextView;
+    private View loadingSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
+        loadingSpinner = findViewById(R.id.loading_spinner);
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
@@ -64,8 +73,16 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
                 startActivity(webIntent);
             }
         });
-        LoaderManager loaderManager = getLoaderManager();
-        loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
+
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            LoaderManager loaderManager = getLoaderManager();
+            loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
+        } else {
+            loadingSpinner.setVisibility(GONE);
+            emptyTextView.setText(R.string.no_connection_msg);
+        }
     }
 
     @Override
@@ -75,15 +92,18 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
+        // Hides progress bar before displaying new earthquake data
+        loadingSpinner.setVisibility(GONE);
+
+        // Set text for empty text view after load is completed.
+        emptyTextView.setText(R.string.empty_message);
+
         // Clear the adapter of previous earthquake data
         earthquakeAdapter.clear();
 
         // Updates earthquakeAdapter with new earthquake list only if the list is not null and not empty.
         if (earthquakes != null && !earthquakes.isEmpty()) {
             earthquakeAdapter.addAll(earthquakes);
-            // Set empty message to empty text view if the earthquake list was empty or null.
-        } else {
-            emptyTextView.setText(R.string.empty_message);
         }
     }
 

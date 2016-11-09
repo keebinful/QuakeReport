@@ -41,6 +41,7 @@ public final class QueryUtils {
 
     // Creates URL, then makes HTTP request to it to retrieve jsonResponse. List data is parsed from the response and returned.
     public static List<Earthquake> fetchEarthquakeData(String requestUrl) {
+
         String jsonResponse = "";
         URL urlObject = createURL(requestUrl);
 
